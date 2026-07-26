@@ -60,8 +60,20 @@ architecture, so there is no glibc/musl split.
 curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash
 ```
 
-Set `GIT_RESTORE_FILEMODE_INSTALL_DIR` to choose the destination directory. The
-default is `~/.local/bin`.
+The installer reads the current `PATH` and installs into the first preferred
+directory it finds there. By default it tries system directories first and falls
+back to user directories when system install paths are unavailable or not
+writable.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash -s -- --user
+curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash -s -- --system
+```
+
+System candidates include `/usr/local/bin`, `/opt/homebrew/bin` on macOS,
+`/usr/bin`, and `/bin`. User candidates include `~/.local/bin`, `~/bin`, and
+the closest `%LOCALAPPDATA%` equivalents on Windows. Set
+`GIT_RESTORE_FILEMODE_INSTALL_DIR` to force a specific directory.
 
 ### Python
 
