@@ -114,6 +114,9 @@ jobs:
       tag: ${{ steps.release.outputs.tag }}
       version: ${{ steps.release.outputs.version }}
     steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
@@ -131,9 +134,6 @@ jobs:
           fi
           printf 'tag=%s\n' "${tag}" >> "${GITHUB_OUTPUT}"
           printf 'version=%s\n' "${tag#v}" >> "${GITHUB_OUTPUT}"
-
-      - name: Checkout source
-        uses: actions/checkout@v4
 
       - name: Check package versions match release tag
         env:
