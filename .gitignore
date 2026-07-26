@@ -1,6 +1,7 @@
 /target
 /build
 /dist
+/scratches/
 *.egg-info
 __pycache__/
 /npm/bin/native

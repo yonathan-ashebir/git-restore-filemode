@@ -4,6 +4,10 @@
 tracked executable bit for regular files. It follows the destination/source
 defaults of `git restore`, but it never restores file contents.
 
+```sh
+curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash
+```
+
 ## Examples
 
 Restore working tree file modes from the index:
@@ -42,38 +46,13 @@ Default source selection matches `git restore`:
 
 ## Install
 
-Git discovers extension commands by executable name, so once this binary is on
-`PATH` it can be run as:
-
-```sh
-git restore-filemode [<options>] [--source=<tree>] <pathspec>...
-```
-
-### Shell
-
-The shell installer first downloads the matching executable from GitHub
-Releases. If a release asset is unavailable, it checks for Rust and falls back to
-building with Cargo. Linux release binaries are static and selected only by CPU
-architecture, so there is no glibc/musl split.
+### Bash script
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash
 ```
 
-The installer reads the current `PATH` and installs into the first preferred
-directory it finds there. By default it tries system directories first and falls
-back to user directories when system install paths are unavailable or not
-writable.
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash -s -- --user
-curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash -s -- --system
-```
-
-System candidates include `/usr/local/bin`, `/opt/homebrew/bin` on macOS,
-`/usr/bin`, and `/bin`. User candidates include `~/.local/bin`, `~/bin`, and
-the closest `%LOCALAPPDATA%` equivalents on Windows. Set
-`GIT_RESTORE_FILEMODE_INSTALL_DIR` to force a specific directory.
+Attempts system dependent global (system) installation path, falling back to user. Accepts --user and --system flags to force use either. Downloads compatible binary when available, building from source otherwise (requires cargo/rust)
 
 ### Python
 

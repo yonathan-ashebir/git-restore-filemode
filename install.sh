@@ -7,7 +7,7 @@ repo_name="${GIT_RESTORE_FILEMODE_REPO_NAME:-git-restore-filemode}"
 release_version="${GIT_RESTORE_FILEMODE_VERSION:-latest}"
 install_dir_override="${GIT_RESTORE_FILEMODE_INSTALL_DIR:-}"
 install_scope="auto"
-repo_url="https://github.com/${repo_owner}/${repo_name}"
+repo_url="${GIT_RESTORE_FILEMODE_REPO_URL:-https://github.com/${repo_owner}/${repo_name}}"
 
 usage() {
   cat <<'EOF'
@@ -133,9 +133,7 @@ system_candidate_dirs() {
     macos)
       printf '%s\n' \
         "/usr/local/bin" \
-        "/opt/homebrew/bin" \
-        "/usr/bin" \
-        "/bin"
+        "/opt/homebrew/bin"
       ;;
     windows)
       program_files="$(to_shell_path "$(env_value ProgramFiles)")"
@@ -151,8 +149,6 @@ system_candidate_dirs() {
     *)
       printf '%s\n' \
         "/usr/local/bin" \
-        "/usr/bin" \
-        "/bin" \
         "/opt/${binary_name}/bin"
       ;;
   esac
