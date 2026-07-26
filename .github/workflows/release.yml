@@ -74,12 +74,13 @@ jobs:
         shell: bash
         run: |
           binary="target/${{ matrix.rust_target }}/release/git-restore-filemode"
-          if ldd "${binary}" 2>&1 | grep -Eiq 'not a dynamic executable|statically linked'; then
+          ldd_output="$(ldd "${binary}" 2>&1 || true)"
+          if printf '%s\n' "${ldd_output}" | grep -Eiq 'not a dynamic executable|statically linked'; then
             exit 0
           fi
 
           file "${binary}"
-          ldd "${binary}" || true
+          printf '%s\n' "${ldd_output}"
           exit 1
 
       - name: Package
