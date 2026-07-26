@@ -3,7 +3,11 @@ name = "git-restore-filemode"
 version = "0.1.0"
 edition = "2024"
 description = "A git extension command that restores tracked executable file modes without restoring file contents."
-license = "MIT OR Apache-2.0"
+license = "MIT"
+repository = "https://github.com/yonathan-ashebir/git-restore-filemode"
+readme = "README.md"
+keywords = ["git", "filemode", "chmod", "restore"]
+categories = ["command-line-utilities", "development-tools"]
 
 [dependencies]
 clap = { version = "4.5.29", features = ["derive"] }

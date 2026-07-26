@@ -1,0 +1,27 @@
+{
+  "name": "git-restore-filemode",
+  "version": "0.1.0",
+  "description": "Restore Git-tracked executable file modes without restoring file contents.",
+  "license": "MIT",
+  "author": "Yonathan Ashebir",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yonathan-ashebir/git-restore-filemode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yonathan-ashebir/git-restore-filemode/issues"
+  },
+  "homepage": "https://github.com/yonathan-ashebir/git-restore-filemode#readme",
+  "bin": {
+    "git-restore-filemode": "npm/bin/git-restore-filemode.js"
+  },
+  "files": [
+    "npm",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "postinstall": "node npm/install.js",
+    "test": "cargo test"
+  }
+}

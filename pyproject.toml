@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "git-restore-filemode"
+version = "0.1.0"
+description = "Restore Git-tracked executable file modes without restoring file contents."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "Yonathan Ashebir" }]
+keywords = ["git", "filemode", "chmod", "restore"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Rust",
+  "Topic :: Software Development :: Version Control :: Git",
+]
+
+[project.urls]
+Homepage = "https://github.com/yonathan-ashebir/git-restore-filemode"
+Repository = "https://github.com/yonathan-ashebir/git-restore-filemode"
+Issues = "https://github.com/yonathan-ashebir/git-restore-filemode/issues"
+
+[project.scripts]
+git-restore-filemode = "git_restore_filemode.__main__:main"
+
+[tool.setuptools]
+package-dir = { "" = "python" }
+
+[tool.setuptools.packages.find]
+where = ["python"]

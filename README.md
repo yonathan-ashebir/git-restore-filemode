@@ -1,15 +1,8 @@
 # git-restore-filemode
 
-`git-restore-filemode` is a Git extension command that restores only Git's
+`git-restore-filemode` is a simple Git extension command that restores only Git's
 tracked executable bit for regular files. It follows the destination/source
 defaults of `git restore`, but it never restores file contents.
-
-Git discovers extension commands by executable name, so once this binary is on
-`PATH` it can be run as:
-
-```sh
-git restore-filemode [<options>] [--source=<tree>] <pathspec>...
-```
 
 ## Examples
 
@@ -49,11 +42,75 @@ Default source selection matches `git restore`:
 
 ## Install
 
+Git discovers extension commands by executable name, so once this binary is on
+`PATH` it can be run as:
+
+```sh
+git restore-filemode [<options>] [--source=<tree>] <pathspec>...
+```
+
+### Shell
+
+The shell installer first downloads the matching executable from GitHub
+Releases. If a release asset is unavailable, it checks for Rust and falls back to
+building with Cargo. Linux release binaries are static and selected only by CPU
+architecture, so there is no glibc/musl split.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash
+```
+
+Set `GIT_RESTORE_FILEMODE_INSTALL_DIR` to choose the destination directory. The
+default is `~/.local/bin`.
+
+### Python
+
+```sh
+uv tool install git-restore-filemode
+pip install --user git-restore-filemode
+```
+
+The Python package installs a small launcher named `git-restore-filemode`. On
+first run it downloads the matching release executable into a per-user cache, or
+falls back to Cargo when Rust is installed.
+
+### Node
+
+```sh
+npm install -g git-restore-filemode
+pnpm add -g git-restore-filemode
+bun install -g git-restore-filemode
+```
+
+The npm package follows the same release-download-first behavior and keeps the
+native executable inside the installed package.
+
+### Cargo
+
 ```sh
 cargo install --path .
+```
+
+After this package is published to crates.io, the direct install command will
+be:
+
+```sh
+cargo install git-restore-filemode
 ```
 
 ## Notes
 
 Only regular Git blobs with modes `100644` and `100755` are restorable. Symlinks,
 submodules, missing working tree files, and non-regular paths are not changed.
+
+Registry metadata for PyPI and npm is included, but publishing those packages is
+intentionally left for a later release step.
+
+## Release Targets
+
+- Linux x64 static: `x86_64-unknown-linux`
+- Linux ARM64 static: `aarch64-unknown-linux`
+- macOS Intel: `x86_64-apple-darwin`
+- macOS Apple Silicon: `aarch64-apple-darwin`
+- Windows x64: `x86_64-pc-windows-msvc`
+- Windows ARM64: `aarch64-pc-windows-msvc`

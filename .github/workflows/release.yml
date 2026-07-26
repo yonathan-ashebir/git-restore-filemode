@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to create or update
+        required: true
+        default: v0.1.0
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.asset_target }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset_target: x86_64-unknown-linux
+            rust_target: x86_64-unknown-linux-musl
+            runner: ubuntu-latest
+            apt: musl-tools
+          - asset_target: aarch64-unknown-linux
+            rust_target: aarch64-unknown-linux-musl
+            runner: ubuntu-24.04-arm
+            apt: musl-tools
+          - asset_target: x86_64-apple-darwin
+            rust_target: x86_64-apple-darwin
+            runner: macos-15-intel
+          - asset_target: aarch64-apple-darwin
+            rust_target: aarch64-apple-darwin
+            runner: macos-15
+          - asset_target: x86_64-pc-windows-msvc
+            rust_target: x86_64-pc-windows-msvc
+            runner: windows-latest
+          - asset_target: aarch64-pc-windows-msvc
+            rust_target: aarch64-pc-windows-msvc
+            runner: windows-11-arm
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use stable Rust
+        shell: bash
+        run: |
+          rustup update stable
+          rustup default stable
+          rustup target add "${{ matrix.rust_target }}"
+
+      - name: Install Linux target dependencies
+        if: ${{ matrix.apt != null && matrix.apt != '' }}
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ matrix.apt }}
+
+      - name: Test
+        shell: bash
+        run: cargo test --locked --target "${{ matrix.rust_target }}"
+
+      - name: Build
+        shell: bash
+        run: cargo build --release --locked --target "${{ matrix.rust_target }}"
+
+      - name: Verify static Linux binary
+        if: ${{ endsWith(matrix.asset_target, '-unknown-linux') }}
+        shell: bash
+        run: |
+          binary="target/${{ matrix.rust_target }}/release/git-restore-filemode"
+          if ldd "${binary}" 2>&1 | grep -Eiq 'not a dynamic executable|statically linked'; then
+            exit 0
+          fi
+
+          file "${binary}"
+          ldd "${binary}" || true
+          exit 1
+
+      - name: Package
+        shell: bash
+        run: bash scripts/package-release.sh "${{ matrix.rust_target }}" "${{ matrix.asset_target }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: git-restore-filemode-${{ matrix.asset_target }}
+          path: dist/git-restore-filemode-${{ matrix.asset_target }}.tar.gz
+          if-no-files-found: error
+
+  publish-release:
+    name: Publish GitHub release assets
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-artifacts
+          merge-multiple: true
+
+      - name: Resolve release tag
+        id: release
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            printf 'tag=%s\n' "${{ inputs.tag }}" >> "${GITHUB_OUTPUT}"
+          else
+            printf 'tag=%s\n' "${GITHUB_REF_NAME}" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        shell: bash
+        run: |
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            gh release upload "${RELEASE_TAG}" dist-artifacts/*.tar.gz --clobber
+          else
+            gh release create "${RELEASE_TAG}" dist-artifacts/*.tar.gz \
+              --target "${GITHUB_SHA}" \
+              --title "${RELEASE_TAG}" \
+              --notes "Automated binary release for ${RELEASE_TAG}."
+          fi
