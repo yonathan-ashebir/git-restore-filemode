@@ -52,7 +52,7 @@ Default source selection matches `git restore`:
 curl -fsSL https://raw.githubusercontent.com/yonathan-ashebir/git-restore-filemode/main/install.sh | bash
 ```
 
-Attempts system dependent global (system) installation path, falling back to user. Accepts --user and --system flags to force use either. Downloads compatible binary when available, building from source otherwise (requires cargo/rust)
+Attempts system dependent global (system) installation path, falling back to user. Accepts --user and --system flags to force use either. Downloads compatible binary when available, building from source otherwise (requires rust)
 
 ### Python
 
@@ -60,11 +60,6 @@ Attempts system dependent global (system) installation path, falling back to use
 uv tool install git-restore-filemode
 pip install --user git-restore-filemode
 ```
-
-The Python package installs a small launcher named `git-restore-filemode`. On
-first run it downloads the matching release executable into a per-user cache, or
-falls back to Cargo when Rust is installed.
-
 ### Node
 
 ```sh
@@ -73,20 +68,17 @@ pnpm add -g git-restore-filemode
 bun install -g git-restore-filemode
 ```
 
-The npm package follows the same release-download-first behavior and keeps the
-native executable inside the installed package.
-
 ### Cargo
 
 ```sh
-cargo install --path .
+cargo install git-restore-filemode
 ```
 
-After this package is published to crates.io, the direct install command will
-be:
-
+### Cargo (from source)
 ```sh
-cargo install git-restore-filemode
+git clone https://github.com/yonathan-ashebir/git-restore-filemode.git --depth 1
+cd git-restore-filemode
+cargo install --path .
 ```
 
 ## Notes
