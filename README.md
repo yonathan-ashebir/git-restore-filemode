@@ -86,9 +86,6 @@ cargo install --path .
 Only regular Git blobs with modes `100644` and `100755` are restorable. Symlinks,
 submodules, missing working tree files, and non-regular paths are not changed.
 
-Registry metadata for PyPI and npm is included, but publishing those packages is
-intentionally left for a later release step.
-
 ## Release Targets
 
 - Linux x64 static: `x86_64-unknown-linux`
